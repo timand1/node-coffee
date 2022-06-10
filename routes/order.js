@@ -6,10 +6,11 @@ const { placeOrder, findOrder } = require('../model/orderdb');
 
 router.post('/', async (req, res) => {
     const cartArr = req.body.cart;
+    const cartItemHasAllProperties = (cartItem) => ['id', 'title', 'amount', 'price'].reduce((acc, key) => acc && cartItem.hasOwnProperty(key), true)
     const resObj = {
         success: false
     };
-    if (cartArr[0].hasOwnProperty('id') && cartArr[0].hasOwnProperty('title') && cartArr[0].hasOwnProperty('amount') && cartArr[0].hasOwnProperty('price') && cartArr.length > 0) {
+    if (cartArr.length > 0 && cartItemHasAllProperties(cartArr[0])) {
         let accountId = req.headers.accountid;
         if (!accountId) {
             accountId = 'Guest'
