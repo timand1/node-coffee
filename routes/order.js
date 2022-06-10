@@ -38,6 +38,8 @@ router.post('/', async (req, res) => {
         if (orderResult) {
             resObj.success = true;
             resObj.message = `Order placed by ${user}`;
+            resObj.orderNr = order.orderNumber,
+                resObj.eta = order.ETA
         };
     } else {
 
@@ -50,7 +52,6 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const accountid = req.params.id;
     let allOrders = []
-    // let activeOrder = [];
     let totalCost = 0;
     const resObj = {
         success: false
@@ -86,25 +87,17 @@ router.get('/:id', async (req, res) => {
                 if (searchHour - dateOrderHour === 0) {
                     if (((dateOrderMinute + dateETA) - searchMinute) > 0) {
                         orderHistory.delivered = false
-                        // activeOrder.push(orderHistory);
                     }
                 } else if (searchHour - dateOrderHour === 1) {
                     if ((((dateOrderMinute + dateETA) - 59) - searchMinute) > 0) {
                         orderHistory.delivered = false
-                        // activeOrder.push(orderHistory);
                     }
                 }
             }
 
             resObj.dateSearch = searchDate;
             resObj.success = true;
-            resObj.orders = allOrders;
-
-            // if (activeOrder.length > 0) {
-            //     resObj.activeOrders = activeOrder;
-            // } else {
-            //     resObj.accountOrders = 'No active orders';
-            // };
+            resObj.orders = allOrders.sort((a, b) => (a.delivered > b.delivered) ? 1 : -1);
             resObj.totalCost = `Total spent ${totalCost} kr`;
         }
     }
